@@ -1,10 +1,23 @@
 import java.util.Scanner;
+
+/**
+ * Ryze is a simple command-line bot for managing tasks.
+ */
 public class Ryze {
-    public static void printDivider(){
+
+    /**
+     * Prints a decorative divider line to the console.
+     */
+    public static void printDivider() {
         System.out.println("➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤");
     }
 
-    public static void echo(String userInput){
+    /**
+     * Echoes the user input surrounded by dividers.
+     *
+     * @param userInput The input string to echo.
+     */
+    public static void echo(String userInput) {
         System.out.println();
         printDivider();
         System.out.println(userInput);
@@ -13,21 +26,28 @@ public class Ryze {
         System.out.println();
     }
 
+    /**
+     * Main method to run the Ryze application.
+     *
+     * @param args Command-line arguments (not used).
+     */
     public static void main(String[] args) {
         Task[] listOfChatHistory = new Task[100];
-        int histoyIndex = 0;
+        int historyIndex = 0;
 
         printDivider();
         System.out.println("Hello! I'm Ryze!");
         System.out.println("What can I do for you?\n");
         printDivider();
         System.out.println();
-        Scanner in = new Scanner(System.in);
-        String line = in.nextLine();
 
-        while (!line.equals("bye")){
+        Scanner scanner = new Scanner(System.in);
+        String line = scanner.nextLine();
+
+        while (!line.equals("bye")) {
             String command = line.split(" ")[0];
             int taskNumber = -1;
+
             switch (command) {
             case "list":
                 printDivider();
@@ -40,6 +60,7 @@ public class Ryze {
                 System.out.println();
                 printDivider();
                 break;
+
             case "mark":
             case "unmark":
                 try {
@@ -49,7 +70,7 @@ public class Ryze {
                     break;
                 }
 
-                if (taskNumber > 0 && taskNumber <= histoyIndex) {
+                if (taskNumber > 0 && taskNumber <= historyIndex) {
                     if (command.equals("mark")) {
                         listOfChatHistory[taskNumber - 1].markAsDone();
                         printDivider();
@@ -67,18 +88,16 @@ public class Ryze {
                     printDivider();
                 }
                 break;
+
             default:
                 echo("added: " + line);
-                listOfChatHistory[histoyIndex] = new Task(line);
-                histoyIndex++;
+                listOfChatHistory[historyIndex] = new Task(line);
+                historyIndex++;
                 break;
             }
 
-
-
-            line = in.nextLine();
+            line = scanner.nextLine();
         }
-
 
         System.out.println();
         printDivider();
