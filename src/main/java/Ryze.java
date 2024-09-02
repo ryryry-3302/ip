@@ -188,6 +188,10 @@ public class Ryze {
     private static void initialiseMessage() {
         printDivider();
         System.out.println("Hello! I'm Ryze!");
+        System.out.println("\n" + "\n" + " ____                _  \n"
+                + "|  _ \\ _   _ _______| | \n" + "| |_) | | | |_  / _ \\ | \n"
+                + "|  _ <| |_| |/ /  __/_| \n" + "|_| \\_\\\\__, /___\\___(_) \n"
+                + "       |___/            \n" + "\n ");
         System.out.println("What can I do for you?\n");
         printDivider();
         System.out.println();
