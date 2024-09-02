@@ -39,7 +39,7 @@ Now you have 3 tasks in the list.
 ➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤
 
 ➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤
-Here are the tasks in your list
+Here are the tasks in your list:
 1.[T][ ] dab
 2.[D][ ] eat (by: tomorrow)
 3.[E][ ] trolling (from: today to: forever)
@@ -51,7 +51,7 @@ Nice! I've marked this task as done:
 
 ➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤
 ➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤
-Here are the tasks in your list
+Here are the tasks in your list:
 1.[T][X] dab
 2.[D][ ] eat (by: tomorrow)
 3.[E][ ] trolling (from: today to: forever)
@@ -63,7 +63,7 @@ Okay! I've marked this task as not done:
 
 ➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤
 ➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤
-Here are the tasks in your list
+Here are the tasks in your list:
 1.[T][ ] dab
 2.[D][ ] eat (by: tomorrow)
 3.[E][ ] trolling (from: today to: forever)
