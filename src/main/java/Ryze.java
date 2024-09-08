@@ -51,7 +51,7 @@ public class Ryze {
             markOrUnmarkTask(line, command);
             break;
         default:
-            System.out.println("Invalid command.");
+            System.out.println("Yoo that command doesn't exist yet lmao");
             break;
         }
     }
