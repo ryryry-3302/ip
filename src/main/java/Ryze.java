@@ -32,28 +32,37 @@ public class Ryze {
 
     private static void processCommand(String line) {
         String command = getCommand(line);
-
-        switch (command) {
-        case LIST_COMMAND:
-            listTasks();
-            break;
-        case TODO_COMMAND:
-            addTodoTask(line);
-            break;
-        case DEADLINE_COMMAND:
-            addDeadlineTask(line);
-            break;
-        case EVENT_COMMAND:
-            addEventTask(line);
-            break;
-        case MARK_COMMAND:
-        case UNMARK_COMMAND:
-            markOrUnmarkTask(line, command);
-            break;
-        default:
-            System.out.println("Invalid command.");
-            break;
+        try {
+            switch (command) {
+            case LIST_COMMAND:
+                listTasks();
+                break;
+            case TODO_COMMAND:
+                addTodoTask(line);
+                break;
+            case DEADLINE_COMMAND:
+                addDeadlineTask(line);
+                break;
+            case EVENT_COMMAND:
+                addEventTask(line);
+                break;
+            case MARK_COMMAND:
+            case UNMARK_COMMAND:
+                markOrUnmarkTask(line, command);
+                break;
+            default:
+                throw new DukeException("That command doesn't exist ??");
+            }
+        } catch (DukeException e) {
+            handleDukeException(e);
         }
+    }
+
+    private static void handleDukeException(DukeException e) {
+        printDivider();
+        System.out.println(e.getMessage());
+        System.out.println();
+        printDivider();
     }
 
     private static String getCommand(String line) {
@@ -79,10 +88,9 @@ public class Ryze {
         printDivider();
     }
 
-    private static void addTodoTask(String line) {
+    private static void addTodoTask(String line) throws InvalidNumberArguments {
         if (line.equals(TODO_COMMAND)) {
-            System.out.println("Please specify a todo");
-            return;
+            throw new InvalidNumberArguments("Please specify todo");
         }
         String description = line.replace(TODO_COMMAND, "").trim();
         listOfChatHistory[historyIndex] = new Todo(description);
@@ -90,24 +98,22 @@ public class Ryze {
         historyIndex++;
     }
 
-    private static void addDeadlineTask(String line) {
-        try {
-            String[] parts = line.split("/by ", 2);
-            String description = parts[0].replace(DEADLINE_COMMAND, "").trim();
-            String deadline = parts[1].trim();
-            if (description.isEmpty() || deadline.isEmpty()) {
-                System.out.println("Invalid command format.");
-                return;
-            }
-            listOfChatHistory[historyIndex] = new Deadline(description, deadline);
-            echo(listOfChatHistory[historyIndex].toString(), historyIndex + 1);
-            historyIndex++;
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Please specify a deadline");
+    private static void addDeadlineTask(String line) throws InvalidNumberArguments {
+        String[] parts = line.split("/by ", 2);
+        if (parts.length == 2){
+        String description = parts[0].replace(DEADLINE_COMMAND, "").trim();
+        String deadline = parts[1].trim();
+        listOfChatHistory[historyIndex] = new Deadline(description, deadline);
+        echo(listOfChatHistory[historyIndex].toString(), historyIndex + 1);
+        historyIndex++;
         }
+        else {
+            throw new InvalidNumberArguments("Invalid command format for adding deadline.");
+        }
+
     }
 
-    private static void addEventTask(String line) {
+    private static void addEventTask(String line) throws InvalidNumberArguments{
         String[] parts = line.split("/from | /to ", 3);
         if (parts.length == 3) {
             String eventDescription = parts[0].replace(EVENT_COMMAND, "").trim();
@@ -117,7 +123,7 @@ public class Ryze {
             echo(listOfChatHistory[historyIndex].toString(), historyIndex + 1);
             historyIndex++;
         } else {
-            System.out.println("Invalid command format.");
+            throw new InvalidNumberArguments("Invalid command format for adding event.");
         }
     }
 
