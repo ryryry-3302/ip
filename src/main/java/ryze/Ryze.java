@@ -1,3 +1,12 @@
+package ryze;
+
+import ryze.exceptions.InvalidNumberArguments;
+import ryze.exceptions.RyzeException;
+import ryze.task.Deadline;
+import ryze.task.Event;
+import ryze.task.Task;
+import ryze.task.Todo;
+
 import java.util.Scanner;
 
 /**
@@ -51,14 +60,14 @@ public class Ryze {
                 markOrUnmarkTask(line, command);
                 break;
             default:
-                throw new DukeException("That command doesn't exist ??");
+                throw new RyzeException("That command doesn't exist ??");
             }
-        } catch (DukeException e) {
+        } catch (RyzeException e) {
             handleDukeException(e);
         }
     }
 
-    private static void handleDukeException(DukeException e) {
+    private static void handleDukeException(RyzeException e) {
         printDivider();
         System.out.println(e.getMessage());
         System.out.println();
