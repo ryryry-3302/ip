@@ -1,3 +1,5 @@
+package ryze.task;
+
 public class Event extends Task {
     /**
      * Event start time.
