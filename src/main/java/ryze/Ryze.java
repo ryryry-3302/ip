@@ -7,6 +7,7 @@ import ryze.task.Event;
 import ryze.task.Task;
 import ryze.task.Todo;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -23,8 +24,8 @@ public class Ryze {
     private static final String MARK_COMMAND = "mark";
     private static final String UNMARK_COMMAND = "unmark";
 
-    private static int historyIndex = 0;  // Static variable for task index
-    private static Task[] listOfChatHistory = new Task[100];  // Static task list
+
+    private static ArrayList<Task> listOfChatHistory = new ArrayList<>();  // Static task list
 
     public static void main(String[] args) {
         initialiseMessage();
@@ -80,14 +81,14 @@ public class Ryze {
 
     private static void listTasks() {
         printDivider();
-        if (historyIndex == 0) {
+        if (listOfChatHistory.isEmpty()) {
             System.out.println("List empty");
             return;
         }
         System.out.println("Here are the tasks in your list:");
         int taskCounter = 1;
-        for (int i = 0; i < historyIndex; i++) {
-            Task task = listOfChatHistory[i];
+        for (int i = 0; i < listOfChatHistory.size(); i++) {
+            Task task = listOfChatHistory.get(i);
             if (task != null) {
                 System.out.printf("%d.%s%n", taskCounter, task);
                 taskCounter++;
@@ -102,9 +103,9 @@ public class Ryze {
             throw new InvalidNumberArguments("Please specify todo");
         }
         String description = line.replace(TODO_COMMAND, "").trim();
-        listOfChatHistory[historyIndex] = new Todo(description);
-        echo(listOfChatHistory[historyIndex].toString(), historyIndex + 1);
-        historyIndex++;
+        Task newTodo = new Todo(description);
+        listOfChatHistory.add(newTodo);
+        echo(newTodo.toString(), listOfChatHistory.size());
     }
 
     private static void addDeadlineTask(String line) throws InvalidNumberArguments {
@@ -112,9 +113,9 @@ public class Ryze {
         if (parts.length == 2){
         String description = parts[0].replace(DEADLINE_COMMAND, "").trim();
         String deadline = parts[1].trim();
-        listOfChatHistory[historyIndex] = new Deadline(description, deadline);
-        echo(listOfChatHistory[historyIndex].toString(), historyIndex + 1);
-        historyIndex++;
+        Task newDeadline = new Deadline(description, deadline);
+        listOfChatHistory.add(newDeadline);
+        echo(newDeadline.toString(), listOfChatHistory.size());
         }
         else {
             throw new InvalidNumberArguments("Invalid command format for adding deadline.");
@@ -128,9 +129,9 @@ public class Ryze {
             String eventDescription = parts[0].replace(EVENT_COMMAND, "").trim();
             String startTime = parts[1].trim();
             String endTime = parts[2].trim();
-            listOfChatHistory[historyIndex] = new Event(eventDescription, startTime, endTime);
-            echo(listOfChatHistory[historyIndex].toString(), historyIndex + 1);
-            historyIndex++;
+            Task newEvent = new Event(eventDescription, startTime, endTime);
+            listOfChatHistory.add(newEvent);
+            echo(newEvent.toString(), listOfChatHistory.size());
         } else {
             throw new InvalidNumberArguments("Invalid command format for adding event.");
         }
@@ -139,8 +140,8 @@ public class Ryze {
     private static void markOrUnmarkTask(String line, String command) {
         try {
             int taskNumber = Integer.parseInt(line.split(" ")[1]);
-            if (taskNumber > 0 && taskNumber <= historyIndex) {
-                Task task = listOfChatHistory[taskNumber - 1];
+            if (taskNumber > 0 && taskNumber <= listOfChatHistory.size()) {
+                Task task = listOfChatHistory.get(taskNumber -1);
                 if (command.equals(MARK_COMMAND)) {
                     if (task.isDone()) {
                         System.out.println("You have already completed this task.");
