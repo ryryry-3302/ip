@@ -42,14 +42,28 @@ public class Ryze {
 
         Scanner scanner = new Scanner(System.in);
         String line;
-
+        int lastSize = listOfChatHistory.size();
         while (!(line = scanner.nextLine()).equals(EXIT_COMMAND)) {
             processCommand(line);
+            lastSize = handleSizeChange(lastSize);
         }
 
         exitMessage();
 
 
+    }
+
+    private static int handleSizeChange(int lastSize) {
+        int currentSize = listOfChatHistory.size();
+        if (lastSize > currentSize){
+            try{
+                overwriteSave();
+            } catch (IOException e) {
+                System.out.println("Error overwriting save file" + e.getMessage());
+            }
+        }
+        lastSize = currentSize;
+        return lastSize;
     }
 
     private static void initialiseData() {
@@ -86,8 +100,11 @@ public class Ryze {
         }
     }
 
-    private static void appendToFile(String filePath, String textToAppend) throws IOException {
-        FileWriter fw = new FileWriter(filePath, true); // create a FileWriter in append mode
+    private static void appendToFile(String textToAppend) throws IOException {
+        Path dirPath = Paths.get("data");
+        Path filePath = dirPath.resolve("ryze.txt");
+        String filePathString = filePath.toString();
+        FileWriter fw = new FileWriter(filePathString, true); // create a FileWriter in append mode
         fw.write(textToAppend);
         fw.close();
     }
@@ -122,8 +139,8 @@ public class Ryze {
         String from = dataEntry.split("~")[3];
         String to = dataEntry.split("~")[4];
         Task newEvent = new Event(description,from,to);
-        boolean done = Integer.parseInt(dataEntry.split("~")[1]) != 0;
-        if(done){
+        boolean isDone = Integer.parseInt(dataEntry.split("~")[1]) != 0;
+        if(isDone){
             newEvent.markAsDone();
         }
         listOfChatHistory.add(newEvent);
@@ -133,8 +150,8 @@ public class Ryze {
         String description = dataEntry.split("~")[2];
         String by = dataEntry.split("~")[3];
         Task newDeadline = new Deadline(description, by);
-        boolean done = Integer.parseInt(dataEntry.split("~")[1]) != 0;
-        if(done){
+        boolean isDone = Integer.parseInt(dataEntry.split("~")[1]) != 0;
+        if(isDone){
             newDeadline.markAsDone();
         }
         listOfChatHistory.add(newDeadline);
@@ -143,8 +160,8 @@ public class Ryze {
     private static void parseTodo(String dataEntry) {
         String description = dataEntry.split("~")[2];
         Task newTodo = new Todo(description);
-        boolean done = Integer.parseInt(dataEntry.split("~")[1]) != 0;
-        if(done){
+        boolean isDone = Integer.parseInt(dataEntry.split("~")[1]) != 0;
+        if(isDone){
             newTodo.markAsDone();
         }
         listOfChatHistory.add(newTodo);
@@ -169,12 +186,15 @@ public class Ryze {
             case MARK_COMMAND:
             case UNMARK_COMMAND:
                 markOrUnmarkTask(line, command);
+                overwriteSave();
                 break;
             default:
                 throw new RyzeException("That command doesn't exist ??");
             }
         } catch (RyzeException e) {
             handleDukeException(e);
+        } catch (IOException e){
+            System.out.println("Something went wrong saving task to Ryze.txt: " + e.getMessage());
         }
     }
 
@@ -197,8 +217,7 @@ public class Ryze {
         }
         System.out.println("Here are the tasks in your list:");
         int taskCounter = 1;
-        for (int i = 0; i < listOfChatHistory.size(); i++) {
-            Task task = listOfChatHistory.get(i);
+        for (Task task : listOfChatHistory) {
             if (task != null) {
                 System.out.printf("%d.%s%n", taskCounter, task);
                 taskCounter++;
@@ -208,7 +227,7 @@ public class Ryze {
         printDivider();
     }
 
-    private static void addTodoTask(String line) throws InvalidNumberArguments {
+    private static void addTodoTask(String line) throws InvalidNumberArguments, IOException {
         if (line.equals(TODO_COMMAND)) {
             throw new InvalidNumberArguments("Please specify todo");
         }
@@ -216,9 +235,10 @@ public class Ryze {
         Task newTodo = new Todo(description);
         listOfChatHistory.add(newTodo);
         echo(newTodo.toString(), listOfChatHistory.size());
+        appendToFile(newTodo.toData());
     }
 
-    private static void addDeadlineTask(String line) throws InvalidNumberArguments {
+    private static void addDeadlineTask(String line) throws InvalidNumberArguments, IOException {
         String[] parts = line.split("/by ", 2);
         if (parts.length == 2){
         String description = parts[0].replace(DEADLINE_COMMAND, "").trim();
@@ -226,14 +246,14 @@ public class Ryze {
         Task newDeadline = new Deadline(description, deadline);
         listOfChatHistory.add(newDeadline);
         echo(newDeadline.toString(), listOfChatHistory.size());
+        appendToFile(newDeadline.toData());
         }
         else {
             throw new InvalidNumberArguments("Invalid command format for adding deadline.");
         }
-
     }
 
-    private static void addEventTask(String line) throws InvalidNumberArguments{
+    private static void addEventTask(String line) throws InvalidNumberArguments, IOException {
         String[] parts = line.split("/from | /to ", 3);
         if (parts.length == 3) {
             String eventDescription = parts[0].replace(EVENT_COMMAND, "").trim();
@@ -242,6 +262,7 @@ public class Ryze {
             Task newEvent = new Event(eventDescription, startTime, endTime);
             listOfChatHistory.add(newEvent);
             echo(newEvent.toString(), listOfChatHistory.size());
+            appendToFile(newEvent.toData());
         } else {
             throw new InvalidNumberArguments("Invalid command format for adding event.");
         }
@@ -318,5 +339,14 @@ public class Ryze {
         System.out.println("What can I do for you?\n");
         printDivider();
         System.out.println();
+    }
+
+    private static void overwriteSave() throws IOException {
+        Path dirPath = Paths.get("data");
+        Path filePath = dirPath.resolve("ryze.txt");
+        Files.write(filePath, new byte[0]);
+        for (Task task : listOfChatHistory) {
+            appendToFile(task.toData());
+        }
     }
 }

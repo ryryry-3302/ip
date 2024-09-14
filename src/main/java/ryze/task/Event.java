@@ -22,6 +22,6 @@ public class Event extends Task {
     }
     @Override
     public String toData() {
-        return "D"+super.toData()+"~"+this.from+"~"+this.to;
+        return "E"+super.toData()+"~"+this.from+"~"+this.to+"\n";
     }
 }
