@@ -6,9 +6,15 @@ import ryze.task.Deadline;
 import ryze.task.Event;
 import ryze.task.Task;
 import ryze.task.Todo;
-
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.nio.file.Files;
+import java.io.File;
 
 /**
  * Ryze is a simple command-line bot for managing tasks.
@@ -23,11 +29,15 @@ public class Ryze {
     private static final String EVENT_COMMAND = "event";
     private static final String MARK_COMMAND = "mark";
     private static final String UNMARK_COMMAND = "unmark";
+    private static final String TODO = "T";
+    private static final String DEADLINE = "D";
+    private static final String EVENT = "E";
 
 
     private static ArrayList<Task> listOfChatHistory = new ArrayList<>();  // Static task list
 
     public static void main(String[] args) {
+        initialiseData();
         initialiseMessage();
 
         Scanner scanner = new Scanner(System.in);
@@ -38,6 +48,10 @@ public class Ryze {
         }
 
         exitMessage();
+
+
+    }
+
     private static void initialiseData() {
         Path dirPath = Paths.get("data");
         Path filePath = dirPath.resolve("ryze.txt");
@@ -85,6 +99,55 @@ public class Ryze {
             parseRyzeTxt(s.nextLine());
         }
     }
+
+    private static void parseRyzeTxt(String dataEntry) {
+        String taskType = dataEntry.split("~")[0];
+        switch (taskType) {
+        case TODO:
+            parseTodo(dataEntry);
+            break;
+        case DEADLINE:
+            parseDeadline(dataEntry);
+            break;
+        case EVENT:
+            parseEvent(dataEntry);
+            break;
+        default:
+            System.out.println("Invalid task type: " + taskType);
+        }
+    }
+
+    private static void parseEvent(String dataEntry) {
+        String description = dataEntry.split("~")[2];
+        String from = dataEntry.split("~")[3];
+        String to = dataEntry.split("~")[4];
+        Task newEvent = new Event(description,from,to);
+        boolean done = Integer.parseInt(dataEntry.split("~")[1]) != 0;
+        if(done){
+            newEvent.markAsDone();
+        }
+        listOfChatHistory.add(newEvent);
+    }
+
+    private static void parseDeadline(String dataEntry) {
+        String description = dataEntry.split("~")[2];
+        String by = dataEntry.split("~")[3];
+        Task newDeadline = new Deadline(description, by);
+        boolean done = Integer.parseInt(dataEntry.split("~")[1]) != 0;
+        if(done){
+            newDeadline.markAsDone();
+        }
+        listOfChatHistory.add(newDeadline);
+    }
+
+    private static void parseTodo(String dataEntry) {
+        String description = dataEntry.split("~")[2];
+        Task newTodo = new Todo(description);
+        boolean done = Integer.parseInt(dataEntry.split("~")[1]) != 0;
+        if(done){
+            newTodo.markAsDone();
+        }
+        listOfChatHistory.add(newTodo);
     }
 
     private static void processCommand(String line) {
