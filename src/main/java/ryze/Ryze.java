@@ -38,6 +38,53 @@ public class Ryze {
         }
 
         exitMessage();
+    private static void initialiseData() {
+        Path dirPath = Paths.get("data");
+        Path filePath = dirPath.resolve("ryze.txt");
+        String filePathString = filePath.toString();
+        File file = new File(filePathString);
+        System.out.println(filePathString);
+
+        // Check if directory exists, if not, create it
+        if (!Files.exists(dirPath)) {
+            try {
+                Files.createDirectories(dirPath);
+            } catch (IOException e) {
+                System.out.println("Error creating directory: " + e.getMessage());
+                return;
+            }
+        }
+
+        // Check if file exists, if not, create it
+        if (!file.exists()) {
+            System.out.println("Data for Ryze not found! Welcome to Ryze new User!");
+            try {
+                Files.createFile(filePath); // Creates the file if it doesn't exist
+            } catch (IOException e) {
+                System.out.println("Something went wrong: " + e.getMessage());
+            }
+        } else {
+            try {
+                readFileContents(filePathString);
+            } catch (IOException e) {
+                System.out.println("Error reading file: " + e.getMessage());
+            }
+        }
+    }
+
+    private static void appendToFile(String filePath, String textToAppend) throws IOException {
+        FileWriter fw = new FileWriter(filePath, true); // create a FileWriter in append mode
+        fw.write(textToAppend);
+        fw.close();
+    }
+
+    private static void readFileContents(String filePath) throws FileNotFoundException {
+        File f = new File(filePath); // create a File for the given file path
+        Scanner s = new Scanner(f); // create a Scanner using the File as the source
+        while (s.hasNext()) {
+            parseRyzeTxt(s.nextLine());
+        }
+    }
     }
 
     private static void processCommand(String line) {
