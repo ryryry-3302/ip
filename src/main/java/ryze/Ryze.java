@@ -23,6 +23,7 @@ public class Ryze {
     private static final String EVENT_COMMAND = "event";
     private static final String MARK_COMMAND = "mark";
     private static final String UNMARK_COMMAND = "unmark";
+    private static final String DELETE_COMMAND = "delete";
 
 
     private static ArrayList<Task> listOfChatHistory = new ArrayList<>();  // Static task list
@@ -60,6 +61,9 @@ public class Ryze {
             case UNMARK_COMMAND:
                 markOrUnmarkTask(line, command);
                 break;
+            case DELETE_COMMAND:
+                deleteTask(line);
+                break;
             default:
                 throw new RyzeException("That command doesn't exist ??");
             }
@@ -67,6 +71,7 @@ public class Ryze {
             handleDukeException(e);
         }
     }
+
 
     private static void handleDukeException(RyzeException e) {
         printDivider();
@@ -106,6 +111,28 @@ public class Ryze {
         Task newTodo = new Todo(description);
         listOfChatHistory.add(newTodo);
         echo(newTodo.toString(), listOfChatHistory.size());
+    }
+    private static void deleteTask(String line) throws InvalidNumberArguments{
+        if (line.equals(DELETE_COMMAND)) {
+            throw new InvalidNumberArguments("Please specify task to delete");
+        }
+        try {
+            int taskNumber = Integer.parseInt(line.split(" ")[1]);
+            if (taskNumber > 0 && taskNumber <= listOfChatHistory.size()) {
+                printDivider();
+                System.out.println("Noted. I've removed this task:");
+                System.out.println(" " + listOfChatHistory.get(taskNumber - 1).toString());
+                listOfChatHistory.remove(taskNumber - 1);
+                System.out.println("Now you have " + listOfChatHistory.size() + " task" + (listOfChatHistory.size() == 1 ?
+                    "" : "s") + " in the list.");
+                printDivider();
+            }
+            else {
+                System.out.println("Invalid task number");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid task number format.");
+        }
     }
 
     private static void addDeadlineTask(String line) throws InvalidNumberArguments {
