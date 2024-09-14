@@ -64,4 +64,5 @@ public class Task {
     public String toString() {
         return "["+ getStatusIcon() + "] " + description;
     }
+    public String toData(){return ("~"+(this.isDone()?1:0)+"~"+this.description);}
 }
