@@ -19,8 +19,9 @@ import java.util.Scanner;
  */
 public class Storage {
 
-    private final Path dirPath;
-    private final Path filePath;
+    private final Path DIRECTORYPATH;
+    private final Path FILEPATH;
+
 
     /**
      * Constructs a {@code Storage} object with specified directory and file names.
@@ -29,8 +30,8 @@ public class Storage {
      * @param fileName  The name of the file where data will be stored.
      */
     public Storage(String directory, String fileName) {
-        this.dirPath = Paths.get(directory);
-        this.filePath = dirPath.resolve(fileName);
+        this.DIRECTORYPATH = Paths.get(directory);
+        this.FILEPATH = DIRECTORYPATH.resolve(fileName);
     }
 
     /**
@@ -38,36 +39,51 @@ public class Storage {
      * If the file exists, it will read its contents.
      */
     public void initialiseData(TaskList listOfChatHistory) {
-        String filePathString = filePath.toString();
+        String filePathString = FILEPATH.toString();
         File file = new File(filePathString);
         System.out.println("File Path: " + filePathString);
 
         // Check if directory exists, if not, create it
-        if (!Files.exists(dirPath)) {
-            try {
-                Files.createDirectories(dirPath);
-                System.out.println("Directory created at: " + dirPath.toString());
-            } catch (IOException e) {
-                System.out.println("Error creating directory: " + e.getMessage());
-                return;
-            }
+        boolean isDirectoryMissing = !Files.exists(DIRECTORYPATH);
+        boolean isFileMissing = !file.exists();
+
+        if (isDirectoryMissing) { //Guard Clause
+            handleDirectoryMissing();
+            return;
         }
 
-        // Check if file exists, if not, create it
-        if (!file.exists()) {
-            System.out.println("Data for Ryze not found! Welcome to Ryze new User!");
-            try {
-                Files.createFile(filePath);
-                System.out.println("New data file created.");
-            } catch (IOException e) {
-                System.out.println("Something went wrong: " + e.getMessage());
-            }
-        } else {
-            try {
-                readFileContents(listOfChatHistory);
-            } catch (IOException e) {
-                System.out.println("Error reading file: " + e.getMessage());
-            }
+        if (isFileMissing) { //Guard Clause
+            handleMissingData();
+            return;
+        }
+        loadDataIntoHistory(listOfChatHistory);
+    }
+
+    private void loadDataIntoHistory(TaskList listOfChatHistory) {
+        try {
+            readFileContents(listOfChatHistory);
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+
+    private void handleMissingData() {
+        System.out.println("Data for Ryze not found! Welcome to Ryze new User!");
+        try {
+            Files.createFile(FILEPATH);
+            System.out.println("New data file created.");
+        } catch (IOException e) {
+            System.out.println("Something went wrong: " + e.getMessage());
+        }
+    }
+
+    private void handleDirectoryMissing() {
+        try {
+            Files.createDirectories(DIRECTORYPATH);
+            System.out.println("Directory created at: " + DIRECTORYPATH.toString());
+        } catch (IOException e) {
+            System.out.println("Error creating directory: " + e.getMessage());
+            return;
         }
     }
 
@@ -78,9 +94,8 @@ public class Storage {
      * @throws IOException If an I/O error occurs while writing to the file.
      */
     public void appendToFile(String textToAppend) throws IOException {
-        try (FileWriter fw = new FileWriter(filePath.toString(), true)) {
+        try (FileWriter fw = new FileWriter(FILEPATH.toString(), true)) {
             fw.write(textToAppend + System.lineSeparator()); // Append text with newline
-            System.out.println("Data appended to file.");
         }
     }
 
@@ -90,7 +105,7 @@ public class Storage {
      * @throws FileNotFoundException If the file does not exist.
      */
     private void readFileContents(TaskList listOfChatHistory) throws FileNotFoundException {
-        File f = new File(filePath.toString());
+        File f = new File(FILEPATH.toString());
         Scanner scanner = new Scanner(f);
         while (scanner.hasNextLine()) {
             Parser.parseRyzeTxt(scanner.nextLine(), listOfChatHistory);
@@ -99,9 +114,8 @@ public class Storage {
     }
 
     private void overwriteSave(TaskList listOfChatHistory) throws IOException {
-        Path dirPath = Paths.get("data");
-        Path filePath = dirPath.resolve("ryze.txt");
-        Files.write(filePath, new byte[0]);
+        ;
+        Files.write(FILEPATH, new byte[0]);
         for (Task task : listOfChatHistory.getTasks()) {
             appendToFile(task.toData());
         }

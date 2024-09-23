@@ -175,37 +175,51 @@ public class Parser {
     private void markOrUnmarkTask(String line, String command, Ui ui, TaskList listOfChatHistory, Storage storage) {
         try {
             int taskNumber = Integer.parseInt(line.split(" ")[1]);
-            if (taskNumber > 0 && taskNumber <= listOfChatHistory.size()) {
-                Task task = listOfChatHistory.getTask(taskNumber - 1);
-                if (command.equals(MARK_COMMAND)) {
-                    if (task.isDone()) {
-                        System.out.println("You have already completed this task.");
-                    } else {
-                        task.markAsDone();
-                        ui.printDivider();
-                        System.out.println("Nice! I've marked this task as done:");
-                        System.out.printf("  %s%n%n", task);
-                    }
-                } else {
-                    if (!task.isDone()) {
-                        System.out.println("You have already uncompleted this task.");
-                    } else {
-                        task.markAsNotDone();
-                        ui.printDivider();
-                        System.out.println("Okay! I've marked this task as not done:");
-                        System.out.printf("  %s%n%n", task);
-                    }
-                }
-                ui.printDivider();
-            } else {
+            boolean isIndexInvalid = taskNumber <= 0 || taskNumber > listOfChatHistory.size();
+            boolean isMarkCommand = command.equals(MARK_COMMAND);
+
+            if (isIndexInvalid) {
                 ui.printDivider();
                 System.out.println("Task number is out of range.\n");
                 ui.printDivider();
+                return;
             }
+
+            Task task = listOfChatHistory.getTask(taskNumber - 1);
+            ui.printDivider();
+
+            if (isMarkCommand) {
+                markTask(task, ui);
+            } else {
+                unmarkTask(task, ui);
+            }
+
+            ui.printDivider();
         } catch (NumberFormatException e) {
             System.out.println("Invalid task number format.");
         }
     }
+
+    private void markTask(Task task, Ui ui) {
+        if (task.isDone()) {
+            System.out.println("You have already completed this task.");
+        } else {
+            task.markAsDone();
+            System.out.println("Nice! I've marked this task as done:");
+            System.out.printf("  %s%n%n", task);
+        }
+    }
+
+    private void unmarkTask(Task task, Ui ui) {
+        if (!task.isDone()) {
+            System.out.println("You have already uncompleted this task.");
+        } else {
+            task.markAsNotDone();
+            System.out.println("Okay! I've marked this task as not done:");
+            System.out.printf("  %s%n%n", task);
+        }
+    }
+
     /**
      * Finds Task entries containing the search term in their description.
      */

@@ -32,6 +32,15 @@ public class Ryze {
 
     public void run() {
         ui.initialiseMessage();
+        processCommand();
+        ui.exitMessage();
+    }
+
+    public static void main(String[] args) {
+        new Ryze().run();
+    }
+
+    private void processCommand() {
         Scanner scanner = new Scanner(System.in);
         String line;
         boolean isDone = false;
@@ -46,11 +55,6 @@ public class Ryze {
             }
             lastSize = storage.handleSizeChange(lastSize,listOfChatHistory);
         }
-        ui.exitMessage();
-    }
-
-    public static void main(String[] args) {
-        new Ryze().run();
     }
 
 
