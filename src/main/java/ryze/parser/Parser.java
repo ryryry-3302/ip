@@ -224,7 +224,7 @@ public class Parser {
      * Finds Task entries containing the search term in their description.
      */
     private void findTask(String line, Ui ui, TaskList listOfChatHistory) throws InvalidNumberArguments, IOException {
-        if (line.equals(TODO_COMMAND)) {
+        if (line.equals(FIND_COMMAND)) {
             throw new InvalidNumberArguments("Please specify search term");
         }
         String[] parts = line.split(" ", 2);
