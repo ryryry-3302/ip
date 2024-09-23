@@ -21,6 +21,7 @@ public class Parser {
     private static final String MARK_COMMAND = "mark";
     private static final String UNMARK_COMMAND = "unmark";
     private static final String DELETE_COMMAND = "delete";
+    private static final String FIND_COMMAND = "find";
     private static final String TODO = "T";
     private static final String DEADLINE = "D";
     private static final String EVENT = "E";
@@ -69,8 +70,12 @@ public class Parser {
             case DELETE_COMMAND:
                 deleteTask(line, ui, listOfChatHistory, storage);
                 break;
+            case FIND_COMMAND:
+                findTask(line, ui, listOfChatHistory);
+                break;
             case EXIT_COMMAND:
                 isDone = true;
+                break;
             default:
                 throw new RyzeException("That command doesn't exist ??");
             }
@@ -202,6 +207,24 @@ public class Parser {
         }
     }
 
+    public void findTask(String line, Ui ui, TaskList listOfChatHistory) throws InvalidNumberArguments, IOException {
+        if (line.equals(TODO_COMMAND)) {
+            throw new InvalidNumberArguments("Please specify search term");
+        }
+        String[] parts = line.split(" ", 2);
+        String searchTerm = parts[1].trim();
+        TaskList listOfTasks = new TaskList();
+        for (Task task : listOfChatHistory.getTasks()) {
+            if(task.getDescription().contains(searchTerm)){
+                listOfTasks.addTask(task);
+            }
+        }
+        try{
+            listTasks(ui,listOfTasks);
+        } catch (RyzeException e) {
+            ui.handleRyzeException(e);
+        }
+    }
 
     /**
      * Parses data entries from Ryze's storage file and adds the tasks to the task list.
