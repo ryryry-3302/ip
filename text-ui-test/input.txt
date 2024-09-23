@@ -4,6 +4,7 @@ event trolling /from today /to forever
 list
 mark 1
 list
+find trolling
 unmark 1
 list
 delete 1
