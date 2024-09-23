@@ -206,8 +206,10 @@ public class Parser {
             System.out.println("Invalid task number format.");
         }
     }
-
-    public void findTask(String line, Ui ui, TaskList listOfChatHistory) throws InvalidNumberArguments, IOException {
+    /**
+     * Finds Task entries containing the search term in their description.
+     */
+    private void findTask(String line, Ui ui, TaskList listOfChatHistory) throws InvalidNumberArguments, IOException {
         if (line.equals(TODO_COMMAND)) {
             throw new InvalidNumberArguments("Please specify search term");
         }
