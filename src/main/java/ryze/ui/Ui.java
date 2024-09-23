@@ -1,5 +1,7 @@
 package ryze.ui;
 
+import ryze.exceptions.RyzeException;
+
 /**
  * The {@code Ui} class handles user interaction messages for the Ryze application.
  * It provides static methods to display initialization and exit messages,
@@ -53,6 +55,22 @@ public class Ui {
         System.out.println("       |___/            ");
         System.out.println();
         System.out.println("What can I do for you?\n");
+        printDivider();
+        System.out.println();
+    }
+    public void handleRyzeException(RyzeException e) {
+        printDivider();
+        System.out.println(e.getMessage());
+        System.out.println();
+        printDivider();
+    }
+    public void echo(String userInput, int count) {
+        System.out.println();
+        printDivider();
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + userInput);
+        System.out.println("Now you have " + count + (count == 1 ? " task" : " tasks") + " in the list.");
+        System.out.println();
         printDivider();
         System.out.println();
     }
