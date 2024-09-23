@@ -11,6 +11,8 @@ Welcome to **Ryze**, your personal task management assistant. Ryze helps you kee
   ```shell
   path/to/ur/folder java -jar ryze.jar
   ```
+
+
 # Features
 
 ## Adding Todos
@@ -149,7 +151,7 @@ find meeting
 
 **Expected Output**:
 ```
-Here are the matching tasks in your list:
+Here are the tasks in your list:
 1.[E][ ] Team meeting (from: 10AM to 11AM)
 ```
 
@@ -161,7 +163,7 @@ Here are the matching tasks in your list:
 
 **Expected Output**:
 ```
-Goodbye! Hope to see you again soon!
+Bye! Hope to see you again soon!
 ```
 
 ---
