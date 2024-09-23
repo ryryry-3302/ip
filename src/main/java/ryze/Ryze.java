@@ -6,6 +6,8 @@ import ryze.task.Deadline;
 import ryze.task.Event;
 import ryze.task.Task;
 import ryze.task.Todo;
+import ryze.ui.Ui;
+
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,7 +23,6 @@ import java.io.File;
  */
 public class Ryze {
 
-    private static final String DIVIDER = "➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤";
     private static final String EXIT_COMMAND = "bye";
     private static final String LIST_COMMAND = "list";
     private static final String TODO_COMMAND = "todo";
@@ -33,15 +34,19 @@ public class Ryze {
     private static final String TODO = "T";
     private static final String DEADLINE = "D";
     private static final String EVENT = "E";
-
+    private Ui ui;
 
 
     private static ArrayList<Task> listOfChatHistory = new ArrayList<>();  // Static task list
 
-    public static void main(String[] args) {
+    public Ryze(){
+        ui = new Ui();
         initialiseData();
-        initialiseMessage();
 
+
+    }
+    public void run() {
+        ui.initialiseMessage();
         Scanner scanner = new Scanner(System.in);
         String line;
         int lastSize = listOfChatHistory.size();
@@ -49,10 +54,12 @@ public class Ryze {
             processCommand(line);
             lastSize = handleSizeChange(lastSize);
         }
+        ui.exitMessage();
+    }
 
-        exitMessage();
 
-
+    public static void main(String[] args) {
+        new Ryze().run();
     }
 
     private static int handleSizeChange(int lastSize) {
@@ -169,7 +176,7 @@ public class Ryze {
         listOfChatHistory.add(newTodo);
     }
 
-    private static void processCommand(String line) {
+    private void processCommand(String line) {
         String command = getCommand(line);
         try {
             switch (command) {
@@ -204,19 +211,19 @@ public class Ryze {
     }
 
 
-    private static void handleDukeException(RyzeException e) {
-        printDivider();
+    private void handleDukeException(RyzeException e) {
+        ui.printDivider();
         System.out.println(e.getMessage());
         System.out.println();
-        printDivider();
+        ui.printDivider();
     }
 
     private static String getCommand(String line) {
         return line.split(" ")[0];
     }
 
-    private static void listTasks() {
-        printDivider();
+    private void listTasks() {
+        ui.printDivider();
         if (listOfChatHistory.isEmpty()) {
             System.out.println("List empty");
             return;
@@ -230,10 +237,10 @@ public class Ryze {
             }
         }
         System.out.println();
-        printDivider();
+        ui.printDivider();
     }
 
-    private static void addTodoTask(String line) throws InvalidNumberArguments, IOException {
+    private void addTodoTask(String line) throws InvalidNumberArguments, IOException {
         if (line.equals(TODO_COMMAND)) {
             throw new InvalidNumberArguments("Please specify todo");
         }
@@ -243,20 +250,20 @@ public class Ryze {
         echo(newTodo.toString(), listOfChatHistory.size());
         appendToFile(newTodo.toData());
     }
-    private static void deleteTask(String line) throws InvalidNumberArguments{
+    private void deleteTask(String line) throws InvalidNumberArguments{
         if (line.equals(DELETE_COMMAND)) {
             throw new InvalidNumberArguments("Please specify task to delete");
         }
         try {
             int taskNumber = Integer.parseInt(line.split(" ")[1]);
             if (taskNumber > 0 && taskNumber <= listOfChatHistory.size()) {
-                printDivider();
+                ui.printDivider();
                 System.out.println("Noted. I've removed this task:");
                 System.out.println(" " + listOfChatHistory.get(taskNumber - 1).toString());
                 listOfChatHistory.remove(taskNumber - 1);
                 System.out.println("Now you have " + listOfChatHistory.size() + " task" + (listOfChatHistory.size() == 1 ?
                     "" : "s") + " in the list.");
-                printDivider();
+                ui.printDivider();
             }
             else {
                 System.out.println("Invalid task number");
@@ -266,7 +273,7 @@ public class Ryze {
         }
     }
 
-    private static void addDeadlineTask(String line) throws InvalidNumberArguments, IOException {
+    private void addDeadlineTask(String line) throws InvalidNumberArguments, IOException {
         String[] parts = line.split("/by ", 2);
         if (parts.length == 2){
         String description = parts[0].replace(DEADLINE_COMMAND, "").trim();
@@ -281,7 +288,7 @@ public class Ryze {
         }
     }
 
-    private static void addEventTask(String line) throws InvalidNumberArguments, IOException {
+    private void addEventTask(String line) throws InvalidNumberArguments, IOException {
         String[] parts = line.split("/from | /to ", 3);
         if (parts.length == 3) {
             String eventDescription = parts[0].replace(EVENT_COMMAND, "").trim();
@@ -296,7 +303,7 @@ public class Ryze {
         }
     }
 
-    private static void markOrUnmarkTask(String line, String command) {
+    private void markOrUnmarkTask(String line, String command) {
         try {
             int taskNumber = Integer.parseInt(line.split(" ")[1]);
             if (taskNumber > 0 && taskNumber <= listOfChatHistory.size()) {
@@ -306,7 +313,7 @@ public class Ryze {
                         System.out.println("You have already completed this task.");
                     } else {
                         task.markAsDone();
-                        printDivider();
+                        ui.printDivider();
                         System.out.println("Nice! I've marked this task as done:");
                         System.out.printf("  %s%n%n", task);
                     }
@@ -315,59 +322,35 @@ public class Ryze {
                         System.out.println("You have already uncompleted this task.");
                     } else {
                         task.markAsNotDone();
-                        printDivider();
+                        ui.printDivider();
                         System.out.println("Okay! I've marked this task as not done:");
                         System.out.printf("  %s%n%n", task);
                     }
                 }
-                printDivider();
+                ui.printDivider();
             } else {
-                printDivider();
+                ui.printDivider();
                 System.out.println("Task number is out of range.\n");
-                printDivider();
+                ui.printDivider();
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid task number format.");
         }
     }
 
-    private static void echo(String userInput, int count) {
+    private void echo(String userInput, int count) {
         System.out.println();
-        printDivider();
+        ui.printDivider();
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + userInput);
         System.out.println("Now you have " + count + (count == 1 ? " task" : " tasks") + " in the list.");
         System.out.println();
-        printDivider();
+        ui.printDivider();
         System.out.println();
     }
 
-    private static void printDivider() {
-        System.out.println(DIVIDER);
-    }
 
-    private static void exitMessage() {
-        System.out.println();
-        printDivider();
-        System.out.println("Bye. Hope to see you again soon!\n");
-        printDivider();
-    }
 
-    private static void initialiseMessage() {
-        printDivider();
-        System.out.println("Hello! I'm Ryze!");
-        System.out.println("\n\n" +
-                " ____                _  \n" +
-                "|  _ \\ _   _ _______| | \n" +
-                "| |_) | | | |_  / _ \\ | \n" +
-                "|  _ <| |_| |/ /  __/_| \n" +
-                "|_| \\_\\\\__, /___\\___(_) \n" +
-                "       |___/            \n" +
-                "\n ");
-        System.out.println("What can I do for you?\n");
-        printDivider();
-        System.out.println();
-    }
 
     private static void overwriteSave() throws IOException {
         Path dirPath = Paths.get("data");
