@@ -3,7 +3,11 @@ package ryze.parser;
 import ryze.exceptions.InvalidNumberArguments;
 import ryze.exceptions.RyzeException;
 import ryze.storage.Storage;
-import ryze.task.*;
+import ryze.task.Task;
+import ryze.task.TaskList;
+import ryze.task.Event;
+import ryze.task.Deadline;
+import ryze.task.Todo;
 import ryze.ui.Ui;
 
 import java.io.IOException;
@@ -23,10 +27,25 @@ public class Parser {
     private static final String EVENT = "E";
     private static Boolean isDone = false;
 
+    /**
+     * Checks if the program has been marked as done.
+     *
+     * @return true if the program is finished (i.e., "bye" command was issued), otherwise false.
+     */
     public boolean done(){
         return isDone;
     }
 
+    /**
+     * Processes the user's input command and performs the appropriate action, such as adding a task,
+     * marking/unmarking a task, listing tasks, or deleting a task.
+     *
+     * @param line the input command from the user
+     * @param storage the storage system used for saving/loading tasks
+     * @param ui the user interface to interact with the user
+     * @param listOfChatHistory the task list storing the user's tasks
+     * @throws RyzeException if the command is invalid or another issue occurs during command execution
+     */
     public void processCommand(String line, Storage storage, Ui ui, TaskList listOfChatHistory) throws RyzeException {
         String command = getCommand(line);
         try {
@@ -187,8 +206,10 @@ public class Parser {
             System.out.println("Invalid task number format.");
         }
     }
-
-    public void findTask(String line, Ui ui, TaskList listOfChatHistory) throws InvalidNumberArguments, IOException {
+    /**
+     * Finds Task entries containing the search term in their description.
+     */
+    private void findTask(String line, Ui ui, TaskList listOfChatHistory) throws InvalidNumberArguments, IOException {
         if (line.equals(TODO_COMMAND)) {
             throw new InvalidNumberArguments("Please specify search term");
         }
@@ -207,6 +228,12 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses data entries from Ryze's storage file and adds the tasks to the task list.
+     *
+     * @param dataEntry a string representation of the stored task
+     * @param listOfChatHistory the task list to which parsed tasks are added
+     */
     public static void parseRyzeTxt(String dataEntry, TaskList listOfChatHistory) {
         String taskType = dataEntry.split("~")[0];
         switch (taskType) {
