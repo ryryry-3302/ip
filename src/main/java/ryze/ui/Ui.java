@@ -58,17 +58,26 @@ public class Ui {
         printDivider();
         System.out.println();
     }
+    /**
+     * Displays an error message to the user based on the RyzeException
+     * @param e The RyzeException that is thrown
+     */
     public void handleRyzeException(RyzeException e) {
         printDivider();
         System.out.println(e.getMessage());
         System.out.println();
         printDivider();
     }
-    public void echo(String userInput, int count) {
+
+
+    /**
+     * Gives feedback to user after a task is added
+     */
+    public void echo(String taskString, int count) {
         System.out.println();
         printDivider();
         System.out.println("Got it. I've added this task:");
-        System.out.println("  " + userInput);
+        System.out.println("  " + taskString);
         System.out.println("Now you have " + count + (count == 1 ? " task" : " tasks") + " in the list.");
         System.out.println();
         printDivider();
