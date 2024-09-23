@@ -12,17 +12,6 @@ Welcome to **Ryze**, your personal task management assistant. Ryze helps you kee
   path/to/ur/folder java -jar ryze.jar
   ```
 # Features
-| **Feature**        | **Description**                                                                                                     | **Command**  |
-|--------------------|---------------------------------------------------------------------------------------------------------------------|--------------|
-| **Exit**           | Exits the program.                                                                                                  | `bye`        |
-| **List Tasks**     | Lists all tasks in the task list with their status (done or not done).                                               | `list`       |
-| **Add Todo Task**  | Adds a new task of type `Todo` to the task list.                                                                     | `todo <desc>`|
-| **Add Deadline Task** | Adds a new task of type `Deadline` with a due date.                                                               | `deadline <desc> /by <date>`|
-| **Add Event Task** | Adds a new task of type `Event` with start and end times.                                                            | `event <desc> /from <start> /to <end>`|
-| **Mark Task**      | Marks a specified task as done.                                                                                      | `mark <task number>`|
-| **Unmark Task**    | Marks a specified task as not done.                                                                                  | `unmark <task number>`|
-| **Delete Task**    | Deletes a specified task from the task list.                                                                         | `delete <task number>`|
-| **Find Task**      | Searches the task list for tasks containing a specified keyword and displays matching tasks.                         | `find <keyword>`|
 
 ## Adding Todos
 - **Action**: Add a simple task that doesn't have a specific deadline or time.
